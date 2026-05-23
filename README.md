@@ -31,7 +31,7 @@ Everything runs **100% in the browser** — no server, no database, no data stor
 
 | What | How |
 |------|-----|
-| Questions | 80 questions (16 per section) stored in `questions.js`. Each session randomly picks 8 per section = **40 unique questions** |
+| Questions | 120 questions (24 per section) stored in `questions.js`. Each session randomly picks 8 per section = **40 unique questions** |
 | Scoring | Sections 1–4: weighted Likert scale (1–5) mapped to 11 branch profiles. Section 5: aptitude score shown separately |
 | Results | Top 2 branches calculated client-side instantly after the last question |
 | Email | [EmailJS](https://emailjs.com) SDK sends the report directly from the browser — no backend needed |

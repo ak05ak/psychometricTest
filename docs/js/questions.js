@@ -26,7 +26,7 @@ const BRANCH_COLORS = {
   metal:'#868E96', phys:'#862E9C', mining:'#A61E4D'
 };
 
-// 80 questions — 16 per section; each session picks 8 per section = 40 total
+// 120 questions — 24 per section; each session picks 8 per section = 40 total
 const ALL_QUESTIONS = [
   // ── SECTION 1: Cognitive & Aptitude Profiling ──────────────────────────────
   { id:1,  section:1, text:"I enjoy breaking down complex problems into smaller, logical steps and finding elegant solutions.", type:'likert', weights:[5,4,3,2,3,2,2,4,2,5,2] },
@@ -116,7 +116,57 @@ const ALL_QUESTIONS = [
   { id:77, section:5, text:"Which of the following is NOT a programming language?", type:'mcq', options:['Python','Java','HTML','Kotlin'], correctAnswer:2 },
   { id:78, section:5, text:"In a class of 40 students, 25 play cricket and 20 play football. If 10 play both, how many play neither?", type:'mcq', options:['5','10','15','20'], correctAnswer:0 },
   { id:79, section:5, text:"What is the antonym of 'Verbose'?", type:'mcq', options:['Talkative','Concise','Elaborate','Detailed'], correctAnswer:1 },
-  { id:80, section:5, text:"A clock shows 3:15. What is the angle between the hour and minute hands?", type:'mcq', options:['7.5°','52.5°','45°','90°'], correctAnswer:0 }
+  { id:80, section:5, text:"A clock shows 3:15. What is the angle between the hour and minute hands?", type:'mcq', options:['7.5°','52.5°','45°','90°'], correctAnswer:0 },
+
+  // ── SECTION 1 extra: Cognitive & Aptitude Profiling (Q81–Q88) ──────────────
+  { id:81,  section:1, text:"I enjoy writing pseudocode or drawing flowcharts to map out logic before I start building anything.", type:'likert', weights:[5,3,2,1,2,1,2,3,1,3,1] },
+  { id:82,  section:1, text:"I naturally think in terms of inputs, processes, and outputs when approaching any problem.", type:'likert', weights:[5,4,3,2,3,2,3,3,2,4,2] },
+  { id:83,  section:1, text:"I enjoy reverse-engineering a finished product to understand exactly how it was built from raw materials.", type:'likert', weights:[3,4,5,3,4,3,4,4,5,3,3] },
+  { id:84,  section:1, text:"I am comfortable working with very small tolerances and highly precise numerical values.", type:'likert', weights:[3,5,5,4,4,4,5,5,4,5,3] },
+  { id:85,  section:1, text:"I like studying how systems behave under extreme conditions such as very high temperature, pressure, or voltage.", type:'likert', weights:[1,2,4,3,3,2,5,5,4,4,3] },
+  { id:86,  section:1, text:"I enjoy finding the most efficient route or schedule when facing limited time, budget, or resources.", type:'likert', weights:[5,3,4,5,3,2,3,4,2,3,3] },
+  { id:87,  section:1, text:"I am drawn to failure analysis — figuring out why something broke and tracing back to the root cause.", type:'likert', weights:[3,4,5,5,4,3,4,5,5,3,4] },
+  { id:88,  section:1, text:"I naturally think about trade-offs — cost vs. performance, speed vs. accuracy — when solving design problems.", type:'likert', weights:[4,4,4,4,4,3,4,5,3,3,3] },
+
+  // ── SECTION 2 extra: Core Domain Affinity (Q89–Q96) ───────────────────────
+  { id:89,  section:2, text:"I want to work on artificial intelligence, machine learning, or large language model development.", type:'likert', weights:[5,4,1,1,2,3,1,2,1,3,1] },
+  { id:90,  section:2, text:"I am interested in designing smart-city systems — intelligent traffic, water networks, and waste management.", type:'likert', weights:[4,3,3,5,4,2,3,1,2,2,2] },
+  { id:91,  section:2, text:"I want to work on medical devices, prosthetics, or other biomedical engineering applications.", type:'likert', weights:[3,3,4,1,3,5,3,1,3,3,1] },
+  { id:92,  section:2, text:"I am excited about electric vehicles, battery technology, and next-generation energy storage systems.", type:'likert', weights:[3,4,4,2,5,2,4,3,4,4,2] },
+  { id:93,  section:2, text:"I want to work on cloud computing, distributed systems, or large-scale data infrastructure.", type:'likert', weights:[5,3,1,1,2,2,1,2,1,2,1] },
+  { id:94,  section:2, text:"I am fascinated by corrosion science, alloy design, and engineering materials for extreme durability.", type:'likert', weights:[1,1,3,4,2,2,4,4,5,3,3] },
+  { id:95,  section:2, text:"I want to work on nuclear reactors, particle accelerators, or other advanced energy systems.", type:'likert', weights:[2,3,3,2,4,2,3,3,3,5,2] },
+  { id:96,  section:2, text:"I am interested in industrial automation, control systems, or programmable logic controllers (PLCs).", type:'likert', weights:[3,5,4,2,5,1,3,3,2,2,3] },
+
+  // ── SECTION 3 extra: Work Environment & Lifestyle (Q97–Q104) ──────────────
+  { id:97,  section:3, text:"I prefer working in a clean, air-conditioned office rather than in harsh outdoor or industrial environments.", type:'likert', weights:[5,4,2,1,3,4,3,3,2,4,1] },
+  { id:98,  section:3, text:"I enjoy working in a small, focused team deeply embedded in a single hard technical problem.", type:'likert', weights:[4,4,3,2,3,5,4,4,3,5,2] },
+  { id:99,  section:3, text:"I would enjoy working for a multinational company with exposure to global projects and diverse cultures.", type:'likert', weights:[5,4,4,4,3,3,4,5,3,3,4] },
+  { id:100, section:3, text:"I prefer structured, process-driven work with clearly defined goals and measurable outcomes.", type:'likert', weights:[4,3,4,5,4,3,4,3,3,2,4] },
+  { id:101, section:3, text:"I am energised by tackling problems that have never been solved before in my field.", type:'likert', weights:[5,4,4,3,4,5,4,5,4,5,3] },
+  { id:102, section:3, text:"I would rather work on a project that saves lives or helps society than one that simply maximises profit.", type:'likert', weights:[3,3,3,4,3,5,3,3,2,3,2] },
+  { id:103, section:3, text:"I enjoy mentoring others and sharing technical knowledge through talks, workshops, or documentation.", type:'likert', weights:[4,3,3,3,3,4,3,3,3,5,2] },
+  { id:104, section:3, text:"I am willing to work in remote locations or challenging geographies if the project requires it.", type:'likert', weights:[2,2,3,5,3,3,3,3,4,2,5] },
+
+  // ── SECTION 4 extra: Personality & Behavioral Traits (Q105–Q112) ──────────
+  { id:105, section:4, text:"I tend to ask 'What if?' questions and enjoy exploring hypothetical scenarios for any given problem.", type:'likert', weights:[4,3,3,3,3,5,4,4,3,5,2] },
+  { id:106, section:4, text:"I prefer having complete information before committing to a decision rather than acting on gut instinct.", type:'likert', weights:[3,4,4,4,4,4,5,2,4,4,3] },
+  { id:107, section:4, text:"I get deep satisfaction from optimising a process — making it faster, cheaper, or more energy-efficient.", type:'likert', weights:[5,4,5,4,4,3,5,4,3,3,3] },
+  { id:108, section:4, text:"I enjoy representing my work visually through diagrams, flowcharts, blueprints, or simulation renders.", type:'likert', weights:[4,4,5,5,3,3,3,5,3,3,3] },
+  { id:109, section:4, text:"I am resilient — I bounce back quickly from failed experiments or setbacks without losing motivation.", type:'likert', weights:[3,3,3,3,3,5,4,4,3,5,4] },
+  { id:110, section:4, text:"I am naturally sceptical and always look for evidence before accepting a technical claim or conclusion.", type:'likert', weights:[4,3,3,3,3,4,4,3,3,5,3] },
+  { id:111, section:4, text:"I enjoy reading about technology trends and proactively staying ahead of changes in my area of interest.", type:'likert', weights:[5,5,4,3,4,4,3,4,3,4,3] },
+  { id:112, section:4, text:"I tend to be the person in a group who steps up to organise, delegate, and keep the team on track.", type:'likert', weights:[4,3,4,5,3,3,4,4,3,2,4] },
+
+  // ── SECTION 5 extra: General Aptitude & Reasoning (Q113–Q120) ─────────────
+  { id:113, section:5, text:"A pipe fills a tank in 6 hours; another empties it in 8 hours. With both open, how long to fill the tank?", type:'mcq', options:['12 hours','24 hours','16 hours','20 hours'], correctAnswer:1 },
+  { id:114, section:5, text:"What is the next letter in the series: A, C, F, J, ___?", type:'mcq', options:['M','N','O','P'], correctAnswer:2 },
+  { id:115, section:5, text:"A jacket costs ₹2000. A shopkeeper gives successive discounts of 10% then 5%. What is the final price?", type:'mcq', options:['₹1700','₹1710','₹1750','₹1800'], correctAnswer:1 },
+  { id:116, section:5, text:"Which word is closest in meaning to 'Ephemeral'?", type:'mcq', options:['Permanent','Temporary','Ancient','Rigid'], correctAnswer:1 },
+  { id:117, section:5, text:"A cube has a surface area of 150 cm². What is its volume?", type:'mcq', options:['75 cm³','100 cm³','125 cm³','150 cm³'], correctAnswer:2 },
+  { id:118, section:5, text:"Pointing to a photo, Rajan says: 'She is the daughter of my grandfather's only son.' How is she related to Rajan?", type:'mcq', options:['Mother','Sister','Aunt','Cousin'], correctAnswer:1 },
+  { id:119, section:5, text:"8 workers build a wall in 12 days. How many days would 6 workers take for the same wall?", type:'mcq', options:['10 days','14 days','16 days','18 days'], correctAnswer:2 },
+  { id:120, section:5, text:"Complete the analogy — Pen : Writer :: Scalpel : ___", type:'mcq', options:['Hospital','Nurse','Surgeon','Medicine'], correctAnswer:2 }
 ];
 
 function getSessionQuestions() {
