@@ -3,7 +3,7 @@
 A 40-question psychometric assessment that helps students identify the best-fit engineering
 branch across 11 disciplines. Built by **Akarsh Kumar**.
 
-🌐 **Live site:** `https://YOUR_USERNAME.github.io/psychometric-test/`
+🌐 **Live site:** `https://ak05ak.github.io/psychometricTest/`
 
 ---
 
