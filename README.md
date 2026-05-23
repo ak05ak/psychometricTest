@@ -16,7 +16,7 @@ psychometricTest/
 │   ├── css/
 │   │   └── style.css      ← All styles, fully responsive
 │   └── js/
-│       ├── questions.js   ← 80-question bank + session shuffler
+│       ├── questions.js   ← 120-question bank + session shuffler
 │       ├── scoring.js     ← Weighted branch-scoring algorithm
 │       └── app.js         ← UI state machine, timer, EmailJS integration
 ├── CLAUDE.md              ← Project spec
