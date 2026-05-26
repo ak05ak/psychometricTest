@@ -101,25 +101,63 @@ const BRANCH_REASONING = {
 };
 
 function calculateScores(responses, questions) {
+  // ── Phase 1: Deviation scoring ────────────────────────────────────────────
+  // Each response is measured as its distance from neutral (3).
+  //   Strongly Agree   (5) → +2 × weight  (boosts matching branches)
+  //   Agree            (4) → +1 × weight
+  //   Neutral          (3) →  0            (contributes nothing)
+  //   Disagree         (2) → -1 × weight  (suppresses unrelated branches)
+  //   Strongly Disagree(1) → -2 × weight
+  //
+  // This removes the baseline inflation of the old r × weight formula,
+  // where even "Strongly Disagree" still gave every branch a positive score.
   const scores = {};
-  const maxScores = {};
-  BRANCH_KEYS.forEach(b => { scores[b] = 0; maxScores[b] = 0; });
+  const maxDev = {};   // maximum possible positive deviation
+  BRANCH_KEYS.forEach(b => { scores[b] = 0; maxDev[b] = 0; });
 
   questions.forEach(q => {
     if (q.type === 'likert') {
       const r = responses[q.id] != null ? responses[q.id] : 3;
       BRANCH_KEYS.forEach((b, i) => {
-        scores[b] += r * q.weights[i];
-        maxScores[b] += 5 * q.weights[i];
+        scores[b] += (r - 3) * q.weights[i];
+        maxDev[b] += 2 * q.weights[i];           // max = (5-3) × weight
       });
     }
-    // Section 5 MCQ is scored separately as aptitude score
+    // Section 5 MCQ scored separately as aptitude — does not affect branch %
   });
+
+  // ── Phase 2: Normalise each branch to 0–100 ──────────────────────────────
+  // scores[b] ∈ [-maxDev[b], +maxDev[b]]
+  // Map to 0–100 via:  (score + maxDev) / (2 × maxDev) × 100
+  const pct = {};
+  BRANCH_KEYS.forEach(b => {
+    pct[b] = maxDev[b] > 0
+      ? ((scores[b] + maxDev[b]) / (2 * maxDev[b])) * 100
+      : 50;
+  });
+
+  // ── Phase 3: Relative rescaling → [38, 85] ───────────────────────────────
+  // Maps the student's actual [min, max] spread onto the display range.
+  // Preserves every relative gap proportionally — the branch that genuinely
+  // scored highest still scores highest, and by the same proportional margin.
+  // Range [38, 85] caps the ceiling at 85% and gives ~5% avg gap per rank step.
+  const vals = Object.values(pct);
+  const lo   = Math.min(...vals);
+  const hi   = Math.max(...vals);
+  const span = hi - lo;
+
+  const FLOOR = 38, CEIL = 85;           // display range — max ~85%, ~5% avg gap
 
   const normalized = {};
   BRANCH_KEYS.forEach(b => {
-    normalized[b] = maxScores[b] > 0 ? Math.round((scores[b] / maxScores[b]) * 100) : 0;
+    if (span < 0.5) {
+      // Truly flat responses (e.g. all answers = 3) — show centred score
+      normalized[b] = Math.round(pct[b]);
+    } else {
+      normalized[b] = Math.round(((pct[b] - lo) / span) * (CEIL - FLOOR) + FLOOR);
+    }
   });
+
   return normalized;
 }
 

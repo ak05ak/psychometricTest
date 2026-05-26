@@ -169,17 +169,77 @@ const ALL_QUESTIONS = [
   { id:120, section:5, text:"Complete the analogy — Pen : Writer :: Scalpel : ___", type:'mcq', options:['Hospital','Nurse','Surgeon','Medicine'], correctAnswer:2 }
 ];
 
+// ── Branch-aware session selector ────────────────────────────────────────────
+// Guarantees every branch appears in at least 2 of the 32 Likert questions,
+// so no branch is invisible to the scoring algorithm.
+//   Step 1: 11 branches × 2 questions each = 22 guaranteed Likert questions
+//           (selected by weight threshold ≥4; fallback to ≥3, then ≥2)
+//   Step 2: 10 additional Likert questions chosen at random from the remainder
+//   Step 3: 8 MCQ questions for Section 5 chosen at random
+//   Sort: questions presented in section → id order so the test flows naturally.
 function getSessionQuestions() {
-  const bySection = { 1:[], 2:[], 3:[], 4:[], 5:[] };
-  ALL_QUESTIONS.forEach(q => bySection[q.section].push(q));
-  const selected = [];
-  [1,2,3,4,5].forEach(s => {
-    const pool = [...bySection[s]];
-    for (let i = pool.length - 1; i > 0; i--) {
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
+      [a[i], a[j]] = [a[j], a[i]];
     }
-    selected.push(...pool.slice(0, 8));
+    return a;
+  }
+
+  const likertPool = shuffle(ALL_QUESTIONS.filter(q => q.type === 'likert'));
+  const mcqPool    = shuffle(ALL_QUESTIONS.filter(q => q.type === 'mcq'));
+
+  const selected  = [];
+  const pickedIds = new Set();
+
+  // Step 1 — guarantee 2 questions per branch (22 questions total)
+  shuffle([...BRANCH_KEYS]).forEach(branch => {
+    const bIdx = BRANCH_KEYS.indexOf(branch);
+    let count = 0;
+    // Try decreasing thresholds so every branch is always covered
+    for (const threshold of [4, 3, 2, 1]) {
+      if (count >= 2) break;
+      for (const q of likertPool) {
+        if (count >= 2) break;
+        if (!pickedIds.has(q.id) && q.weights[bIdx] >= threshold) {
+          selected.push(q);
+          pickedIds.add(q.id);
+          count++;
+        }
+      }
+    }
   });
-  return selected;
+
+  // Step 2 — fill remaining Likert slots (32 total Likert per session)
+  const remaining = likertPool.filter(q => !pickedIds.has(q.id));
+  const fill = 32 - selected.length;   // normally 10
+  remaining.slice(0, fill).forEach(q => selected.push(q));
+
+  // Step 3 — 8 MCQ questions for Section 5
+  mcqPool.slice(0, 8).forEach(q => selected.push(q));
+
+  // Present questions in natural order (section 1→5, then by id within section)
+  return selected.sort((a, b) =>
+    a.section !== b.section ? a.section - b.section : a.id - b.id
+  );
 }
+
+// ── Auto-assign primaryBranch tag to every Likert question ───────────────────
+// The primaryBranch is the branch whose weight is highest on that question.
+// Ties are broken greedily to keep per-branch counts as balanced as possible
+// across the full 96-question Likert pool.
+(function assignPrimaryBranches() {
+  const counts = {};
+  BRANCH_KEYS.forEach(b => { counts[b] = 0; });
+
+  ALL_QUESTIONS.filter(q => q.type === 'likert').forEach(q => {
+    const maxW = Math.max(...q.weights);
+    // All branches that share the maximum weight
+    const candidates = BRANCH_KEYS.filter((b, i) => q.weights[i] === maxW);
+    // Pick the one with the fewest assignments so far (balance the load)
+    candidates.sort((a, b) => counts[a] - counts[b]);
+    q.primaryBranch = candidates[0];
+    counts[candidates[0]]++;
+  });
+})();

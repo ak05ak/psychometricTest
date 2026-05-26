@@ -16,7 +16,7 @@ psychometricTest/
 │   ├── css/
 │   │   └── style.css      ← All styles, fully responsive
 │   └── js/
-│       ├── questions.js   ← 120-question bank + session shuffler
+│       ├── questions.js   ← 120-question bank + branch-aware session selector
 │       ├── scoring.js     ← Weighted branch-scoring algorithm
 │       └── app.js         ← UI state machine, timer, EmailJS integration
 ├── CLAUDE.md              ← Project spec
@@ -31,8 +31,8 @@ Everything runs **100% in the browser** — no server, no database, no data stor
 
 | What | How |
 |------|-----|
-| Questions | 120 questions (24 per section) stored in `questions.js`. Each session randomly picks 8 per section = **40 unique questions** |
-| Scoring | Sections 1–4: weighted Likert scale (1–5) mapped to 11 branch profiles. Section 5: aptitude score shown separately |
+| Questions | 120 questions (24 per section) stored in `questions.js`. Each session picks **32 Likert + 8 MCQ = 40 unique questions**. The 32 Likert questions are chosen via a branch-aware algorithm |
+| Scoring | Sections 1–4: **deviation scoring** — each response is measured as distance from neutral (3), so disagreeing actively suppresses unrelated branches. Scores are relatively rescaled to a [38, 85] display range (max ~85%, ~5% avg gap per rank). Section 5 aptitude scored separately |
 | Results | Top 2 branches calculated client-side instantly after the last question |
 | Email | [EmailJS](https://emailjs.com) SDK sends the report directly from the browser — no backend needed |
 
