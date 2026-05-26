@@ -18,7 +18,6 @@ const EMAILJS_CONFIG = {
   serviceId:  'service_1swj296',   // Email Services tab
   templateId: 'template_7q47m45'  // Email Templates tab
 };
-const ADMIN_EMAIL = 'akarshkr05@gmail.com';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function showView(id) {
@@ -343,21 +342,12 @@ async function submitEmail() {
     // Send to user
     await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, templateParams);
 
-    // Send copy to admin
-    await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
-      ...templateParams,
-      to_name:  'Akarsh Kumar',
-      to_email: ADMIN_EMAIL,
-      // Include submitter context in admin copy
-      branch1_pts: `Submitted by: ${r.userName} <${email}>\n\n` + templateParams.branch1_pts
-    });
-
     el('email-status').className = 'email-status success';
     el('email-status').textContent = `✅ Report sent to ${email}! Check your inbox (and spam folder).`;
   } catch (err) {
     console.error('EmailJS error:', err);
     el('email-status').className = 'email-status error';
-    el('email-status').textContent = '❌ Could not send. Check your EmailJS configuration or try again.';
+    el('email-status').textContent = '❌ Could not send email, try again.';
   }
 
   el('email-status').style.display = 'block';
